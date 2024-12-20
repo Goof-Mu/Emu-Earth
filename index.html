@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Metaverse Land</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        header {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        main {
+            padding: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        h1, h2 {
+            color: #333;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        input {
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 10px;
+            font-size: 16px;
+            color: #fff;
+            background-color: #007bff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        footer {
+            text-align: center;
+            padding: 10px;
+            background-color: #333;
+            color: #fff;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .stats {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #e9ecef;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .stats p {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Welcome to Metaverse Land</h1>
+    </header>
+    <main>
+        <section id="signup-section">
+            <h2>Sign Up and Claim Your Free Land</h2>
+            <form id="signup-form">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" required>
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+                <button type="submit">Sign Up</button>
+            </form>
+            <p id="success-message" class="hidden">Sign up successful! You have been assigned free land worth $1.</p>
+        </section>
+        <section id="buy-land-section">
+            <h2>Buy More Land</h2>
+            <button id="buy-land-button">Buy Land for $10</button>
+            <p id="purchase-message" class="hidden">Thank you for your purchase!</p>
+        </section>
+        <section class="stats">
+            <h2>Statistics</h2>
+            <p id="total-land">Total Parcels: 1</p>
+            <p id="total-value">Total Land Value: $1.00</p>
+            <p id="monthly-income">Monthly Income (1%): $0.01</p>
+        </section>
+    </main>
+    <footer>
+        <p>© 2024 Metaverse Land. All rights reserved.</p>
+    </footer>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            let totalLand = 1; // Free land included
+            let totalValue = 1; // $1 for the free parcel
+
+            const successMessage = document.getElementById("success-message");
+            const purchaseMessage = document.getElementById("purchase-message");
+            const totalLandElement = document.getElementById("total-land");
+            const totalValueElement = document.getElementById("total-value");
+            const monthlyIncomeElement = document.getElementById("monthly-income");
+
+            const signupForm = document.getElementById("signup-form");
+            const buyLandButton = document.getElementById("buy-land-button");
+
+            // Update statistics
+            function updateStats() {
+                const monthlyIncome = (totalValue * 0.01).toFixed(2);
+                totalLandElement.textContent = `Total Parcels: ${totalLand}`;
+                totalValueElement.textContent = `Total Land Value: $${totalValue.toFixed(2)}`;
+                monthlyIncomeElement.textContent = `Monthly Income (1%): $${monthlyIncome}`;
+            }
+
+            // Handle signup
+            signupForm.addEventListener("submit", (event) => {
+                event.preventDefault();
+                successMessage.classList.remove("hidden");
+                updateStats();
+            });
+
+            // Handle land purchase
+            buyLandButton.addEventListener("click", () => {
+                totalLand++;
+                totalValue += 10; // Each additional parcel costs $10
+                purchaseMessage.classList.remove("hidden");
+                updateStats();
+            });
+
+            // Initial stats update
+            updateStats();
+        });
+    </script>
+</body>
+</html>
