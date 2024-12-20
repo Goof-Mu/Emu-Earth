@@ -9,19 +9,19 @@
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f4f4f4;
+            background-color: #f9f9f9;
         }
 
         header {
-            background-color: #333;
+            background-color: #4caf50;
             color: #fff;
             text-align: center;
-            padding: 20px 0;
+            padding: 20px;
         }
 
         main {
             padding: 20px;
-            max-width: 600px;
+            max-width: 900px;
             margin: 0 auto;
         }
 
@@ -32,13 +32,13 @@
         form {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 15px;
         }
 
         input {
             padding: 10px;
             font-size: 16px;
-            border: 1px solid #ccc;
+            border: 1px solid #ddd;
             border-radius: 4px;
         }
 
@@ -46,28 +46,45 @@
             padding: 10px;
             font-size: 16px;
             color: #fff;
-            background-color: #007bff;
+            background-color: #4caf50;
             border: none;
             border-radius: 4px;
             cursor: pointer;
         }
 
         button:hover {
-            background-color: #0056b3;
+            background-color: #45a049;
         }
 
-        .hidden {
-            display: none;
+        #map-container {
+            display: grid;
+            grid-template-columns: repeat(10, 40px);
+            gap: 5px;
+            justify-content: center;
+            margin-top: 20px;
         }
 
-        footer {
-            text-align: center;
-            padding: 10px;
-            background-color: #333;
+        .land-tile {
+            width: 40px;
+            height: 40px;
+            background-color: #ddd;
+            border: 1px solid #ccc;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .land-tile.owned {
+            background-color: #4caf50;
             color: #fff;
-            position: fixed;
-            bottom: 0;
-            width: 100%;
+            cursor: default;
+        }
+
+        .land-tile:hover:not(.owned) {
+            background-color: #b8e6b8;
         }
 
         .stats {
@@ -82,31 +99,33 @@
             margin: 0;
         }
 
-        #claim-land-button {
-            margin-top: 10px;
+        #login-section, #map-section, .stats {
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
     <header>
-        <h1>Welcome to Metaverse Land</h1>
+        <h1>Metaverse Land</h1>
     </header>
     <main>
-        <section id="signup-section">
+        <section id="login-section">
             <h2>Sign In</h2>
-            <form id="signup-form">
+            <form id="login-form">
                 <label for="username">Username:</label>
                 <input type="text" id="username" name="username" required>
                 <label for="email">Email:</label>
                 <input type="email" id="email" name="email" required>
                 <button type="submit">Sign In</button>
             </form>
-            <p id="success-message" class="hidden">Sign in successful! You can now claim land.</p>
         </section>
-        <section id="land-section" class="hidden">
-            <h2>Claim More Land</h2>
-            <button id="claim-land-button">Claim Land for $1</button>
+
+        <section id="map-section" class="hidden">
+            <h2>Land Map</h2>
+            <p>Select and claim land tiles. Each tile costs $1.</p>
+            <div id="map-container"></div>
         </section>
+
         <section class="stats hidden">
             <h2>Your Statistics</h2>
             <p id="total-land">Total Parcels: 1</p>
@@ -119,17 +138,29 @@
     </footer>
     <script>
         document.addEventListener("DOMContentLoaded", () => {
-            let totalLand = 1; // Starts with 1 free parcel
-            let totalValue = 1; // $1 for the free parcel
-
-            const signupForm = document.getElementById("signup-form");
-            const successMessage = document.getElementById("success-message");
-            const landSection = document.getElementById("land-section");
-            const claimLandButton = document.getElementById("claim-land-button");
+            const loginSection = document.getElementById("login-section");
+            const loginForm = document.getElementById("login-form");
+            const mapSection = document.getElementById("map-section");
+            const mapContainer = document.getElementById("map-container");
             const statsSection = document.querySelector(".stats");
             const totalLandElement = document.getElementById("total-land");
             const totalValueElement = document.getElementById("total-value");
             const monthlyIncomeElement = document.getElementById("monthly-income");
+
+            let totalLand = 1; // Starts with 1 free parcel
+            let totalValue = 1; // $1 for the free parcel
+            const mapSize = 10; // 10x10 grid
+
+            // Populate the map
+            function generateMap() {
+                for (let i = 0; i < mapSize * mapSize; i++) {
+                    const tile = document.createElement("div");
+                    tile.classList.add("land-tile");
+                    tile.textContent = i + 1;
+                    tile.dataset.id = i + 1;
+                    mapContainer.appendChild(tile);
+                }
+            }
 
             // Update statistics
             function updateStats() {
@@ -139,23 +170,28 @@
                 monthlyIncomeElement.textContent = `Monthly Income (1%): $${monthlyIncome}`;
             }
 
-            // Handle sign-in
-            signupForm.addEventListener("submit", (event) => {
+            // Handle login
+            loginForm.addEventListener("submit", (event) => {
                 event.preventDefault();
-                successMessage.classList.remove("hidden");
-                landSection.classList.remove("hidden");
+                loginSection.classList.add("hidden");
+                mapSection.classList.remove("hidden");
                 statsSection.classList.remove("hidden");
                 updateStats();
             });
 
-            // Handle land claim
-            claimLandButton.addEventListener("click", () => {
-                totalLand++;
-                totalValue += 1; // Each parcel costs $1
-                updateStats();
+            // Handle land claiming
+            mapContainer.addEventListener("click", (event) => {
+                const tile = event.target;
+                if (tile.classList.contains("land-tile") && !tile.classList.contains("owned")) {
+                    tile.classList.add("owned");
+                    totalLand++;
+                    totalValue += 1; // Each tile costs $1
+                    updateStats();
+                }
             });
 
-            // Initial stats update
+            // Initialize map and stats
+            generateMap();
             updateStats();
         });
     </script>
