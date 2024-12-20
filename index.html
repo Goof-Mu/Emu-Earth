@@ -81,6 +81,10 @@
         .stats p {
             margin: 0;
         }
+
+        #claim-land-button {
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
@@ -89,23 +93,22 @@
     </header>
     <main>
         <section id="signup-section">
-            <h2>Sign Up and Claim Your Free Land</h2>
+            <h2>Sign In</h2>
             <form id="signup-form">
                 <label for="username">Username:</label>
                 <input type="text" id="username" name="username" required>
                 <label for="email">Email:</label>
                 <input type="email" id="email" name="email" required>
-                <button type="submit">Sign Up</button>
+                <button type="submit">Sign In</button>
             </form>
-            <p id="success-message" class="hidden">Sign up successful! You have been assigned free land worth $1.</p>
+            <p id="success-message" class="hidden">Sign in successful! You can now claim land.</p>
         </section>
-        <section id="buy-land-section">
-            <h2>Buy More Land</h2>
-            <button id="buy-land-button">Buy Land for $10</button>
-            <p id="purchase-message" class="hidden">Thank you for your purchase!</p>
+        <section id="land-section" class="hidden">
+            <h2>Claim More Land</h2>
+            <button id="claim-land-button">Claim Land for $1</button>
         </section>
-        <section class="stats">
-            <h2>Statistics</h2>
+        <section class="stats hidden">
+            <h2>Your Statistics</h2>
             <p id="total-land">Total Parcels: 1</p>
             <p id="total-value">Total Land Value: $1.00</p>
             <p id="monthly-income">Monthly Income (1%): $0.01</p>
@@ -116,17 +119,17 @@
     </footer>
     <script>
         document.addEventListener("DOMContentLoaded", () => {
-            let totalLand = 1; // Free land included
+            let totalLand = 1; // Starts with 1 free parcel
             let totalValue = 1; // $1 for the free parcel
 
+            const signupForm = document.getElementById("signup-form");
             const successMessage = document.getElementById("success-message");
-            const purchaseMessage = document.getElementById("purchase-message");
+            const landSection = document.getElementById("land-section");
+            const claimLandButton = document.getElementById("claim-land-button");
+            const statsSection = document.querySelector(".stats");
             const totalLandElement = document.getElementById("total-land");
             const totalValueElement = document.getElementById("total-value");
             const monthlyIncomeElement = document.getElementById("monthly-income");
-
-            const signupForm = document.getElementById("signup-form");
-            const buyLandButton = document.getElementById("buy-land-button");
 
             // Update statistics
             function updateStats() {
@@ -136,18 +139,19 @@
                 monthlyIncomeElement.textContent = `Monthly Income (1%): $${monthlyIncome}`;
             }
 
-            // Handle signup
+            // Handle sign-in
             signupForm.addEventListener("submit", (event) => {
                 event.preventDefault();
                 successMessage.classList.remove("hidden");
+                landSection.classList.remove("hidden");
+                statsSection.classList.remove("hidden");
                 updateStats();
             });
 
-            // Handle land purchase
-            buyLandButton.addEventListener("click", () => {
+            // Handle land claim
+            claimLandButton.addEventListener("click", () => {
                 totalLand++;
-                totalValue += 10; // Each additional parcel costs $10
-                purchaseMessage.classList.remove("hidden");
+                totalValue += 1; // Each parcel costs $1
                 updateStats();
             });
 
